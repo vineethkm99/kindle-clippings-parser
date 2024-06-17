@@ -1,10 +1,11 @@
+import re
 from typing import List
 from clippingsParserHelpers import *
-
+import os
 # Location of clippings file
 # TODO: import this with a YAML file later
-CLIPPINGS = 'My Clippings.txt'
-
+CLIPPINGS = "My Clippings.txt"
+OUTPUT_FOLDER = "outputs"
 highlights = {
     'titles': [],
     # It will also have the following list-of-tuples for each book:
@@ -71,13 +72,15 @@ def save_highlights(title: str, book_highlights: List):
     - `book_highlights`: list-of-tuples containing the parsed text of the highlights (basically `highlights['book-name']`)
     """
     title = title.replace('/', '-')
-    md_file = open(f'{title}.md', 'w+')
+    title=get_valid_filename(title)
+    filepath = f"{os.path.join(OUTPUT_FOLDER,title)}.md"
+    md_file = open(filepath, 'w+')
     md_file.write('')
     md_file.close()
 
     highlight_ind = 1
 
-    md_file = open(f'{title}.md', 'a')
+    md_file = open(filepath, 'a')
     for highlight in book_highlights:
         hText, hType, hEnd = highlight
         hText = hText.strip() + '\n'
@@ -90,6 +93,13 @@ def save_highlights(title: str, book_highlights: List):
                 md_file.write('\n')  # It's a new note
             md_file.write(f'> {hText}')
     md_file.close()
+
+def get_valid_filename(name):
+    s = str(name).strip().replace(" ", "_")
+    s = re.sub(r"(?u)[^-\w.]", "", s)
+    if s in {"", ".", ".."}:
+        raise Exception("Could not derive file name from '%s'" % name)
+    return s
 
 for title in highlights['titles']:
     save_highlights(title, highlights[title])
