@@ -4,7 +4,7 @@ from clippingsParserHelpers import *
 import os
 # Location of clippings file
 # TODO: import this with a YAML file later
-CLIPPINGS = "My Clippings.txt"
+CLIPPINGS = r"C:\Users\vinee\OneDrive\Kindle Screenshots\My Clippings\My Clippings 2021_02_25.txt"
 OUTPUT_FOLDER = "outputs"
 highlights = {
     'titles': [],
@@ -72,6 +72,8 @@ def save_highlights(title: str, book_highlights: List):
     - `book_highlights`: list-of-tuples containing the parsed text of the highlights (basically `highlights['book-name']`)
     """
     title = title.replace('/', '-')
+    if title=='':
+        return
     title=get_valid_filename(title)
     filepath = f"{os.path.join(OUTPUT_FOLDER,title)}.md"
     md_file = open(filepath, 'w+')
